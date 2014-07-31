@@ -6,3 +6,52 @@ body {
 a {
   color: #00B7FF;
 }
+
+.container {
+  width: 500px;
+}
+
+.upper-panel {
+  overflow: hidden;
+}
+
+.panel1, .panel2, .panel3 {
+  float: left;
+}
+.panel1 {
+  padding: 30px 50px 30px 50px;
+  background-color: #FFD700;
+}
+.panel2 {
+  padding: 30px 50px 30px 50px;
+  background-color: #FF8C00;
+}
+.panel3 {
+  padding: 30px 50px 30px 50px;
+  background-color: #FFFF00;
+}
+
+.lower-panel {
+  overflow: hidden;
+  margin: 0 auto 10px auto;
+}
+
+.panel4, .panel5, .panel6 {
+  float: left;
+}
+.panel4 {
+  padding: 30px 50px 30px 50px;
+  background-color: #ADFF2F;
+}
+.panel5 {
+  padding: 30px 50px 30px 50px;
+  background-color: #1E90FF;
+}
+.panel6 {
+  padding: 30px 50px 30px 50px;
+  background-color: #00FF00;
+}
+
+.answer {
+}
+

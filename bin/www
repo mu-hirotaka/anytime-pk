@@ -7,3 +7,125 @@ app.set('port', process.env.PORT || 3000);
 var server = app.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
 });
+
+var socketIO = require('socket.io');
+var io = socketIO.listen(server);
+var answers = ['1', '2', '3', '4', '5', '6'];
+var answer;
+var userAnswersNum;
+var timeoutFlg;
+var ANSWER_TIME = 3000;
+
+initializeAnswer();
+initializeUserAnswersNum();
+
+io.on('connection', function (socket) {
+
+  socket.emit('login', socket.id);
+
+  socket.on('shot panel1', function (data) {
+    var panelNo = 1;
+    userAnswersNum[panelNo].push(1);
+    socket.answer = panelNo;
+
+    broadcastActionLog(socket, panelNo);
+    if (!timeoutFlg) {
+      timeoutFlg = setTimeout(function() { 
+        broadcastAnswer(socket);
+      }, ANSWER_TIME);
+    }
+  });
+
+  socket.on('shot panel2', function (data) {
+    var panelNo = 2;
+    userAnswersNum[panelNo].push(1);
+    socket.answer = panelNo;
+    broadcastActionLog(socket, panelNo);
+    if (!timeoutFlg) {
+      timeoutFlg = setTimeout(function() { 
+        broadcastAnswer(socket);
+      }, ANSWER_TIME);
+    }
+  });
+
+  socket.on('shot panel3', function (data) {
+    var panelNo = 3;
+    userAnswersNum[panelNo].push(1);
+    socket.answer = panelNo;
+    broadcastActionLog(socket, panelNo);
+    if (!timeoutFlg) {
+      timeoutFlg = setTimeout(function() { 
+        broadcastAnswer(socket);
+      }, ANSWER_TIME);
+    }
+  });
+
+  socket.on('shot panel4', function (data) {
+    var panelNo = 4;
+    userAnswersNum[panelNo].push(1);
+    socket.answer = panelNo;
+    broadcastActionLog(socket, panelNo);
+    if (!timeoutFlg) {
+      timeoutFlg = setTimeout(function() { 
+        broadcastAnswer(socket);
+      }, ANSWER_TIME);
+    }
+  });
+
+  socket.on('shot panel5', function (data) {
+    var panelNo = 5;
+    console.log('shot panel5');
+    userAnswersNum[panelNo].push(1);
+    socket.answer = panelNo;
+    broadcastActionLog(socket, panelNo);
+    if (!timeoutFlg) {
+      timeoutFlg = setTimeout(function() { 
+        broadcastAnswer(socket);
+      }, ANSWER_TIME);
+    }
+  });
+
+  socket.on('shot panel6', function (data) {
+    var panelNo = 6;
+    userAnswersNum[panelNo].push(1);
+    socket.answer = panelNo;
+    broadcastActionLog(socket, panelNo);
+    if (!timeoutFlg) {
+      timeoutFlg = setTimeout(function() { 
+        broadcastAnswer(socket);
+      }, ANSWER_TIME);
+    }
+  });
+
+});
+
+function broadcastAnswer (socket) {
+  console.log(userAnswersNum);
+  io.sockets.emit('answer', {
+    answer: answer,
+  });
+  initializeAnswer();
+  initializeUserAnswersNum();
+  timeoutFlg = 0;
+}
+
+function initializeAnswer () {
+  answer = answers[Math.floor(Math.random() * answers.length)];
+}
+function initializeUserAnswersNum () {
+  userAnswersNum = {
+    '1' : [],
+    '2' : [],
+    '3' : [],
+    '4' : [],
+    '5' : [],
+    '6' : []
+  };
+}
+
+function broadcastActionLog (socket, panelNo) {
+  socket.broadcast.emit('action log', {
+    message: socket.id + 'は' + panelNo + 'を選択'
+  });
+}
+
