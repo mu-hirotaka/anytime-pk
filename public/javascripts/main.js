@@ -61,4 +61,5 @@ $(function () {
   socket.on('action log', function(data) {
     $actionLog.prepend('<li>' + data.message + '</li>');
   });
+
 });

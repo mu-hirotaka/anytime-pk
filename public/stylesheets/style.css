@@ -17,18 +17,31 @@ a {
 
 .panel1, .panel2, .panel3 {
   float: left;
+  cursor:pointer;
 }
 .panel1 {
   padding: 30px 50px 30px 50px;
   background-color: #FFD700;
 }
+.panel1:hover {
+  background-color: #000;
+  color: #fff;
+}
 .panel2 {
   padding: 30px 50px 30px 50px;
   background-color: #FF8C00;
 }
+.panel2:hover {
+  background-color: #000;
+  color: #fff;
+}
 .panel3 {
   padding: 30px 50px 30px 50px;
   background-color: #FFFF00;
+}
+.panel3:hover {
+  background-color: #000;
+  color: #fff;
 }
 
 .lower-panel {
@@ -38,18 +51,31 @@ a {
 
 .panel4, .panel5, .panel6 {
   float: left;
+  cursor:pointer;
 }
 .panel4 {
   padding: 30px 50px 30px 50px;
   background-color: #ADFF2F;
 }
+.panel4:hover {
+  background-color: #000;
+  color: #fff;
+}
 .panel5 {
   padding: 30px 50px 30px 50px;
   background-color: #1E90FF;
 }
+.panel5:hover {
+  background-color: #000;
+  color: #fff;
+}
 .panel6 {
   padding: 30px 50px 30px 50px;
   background-color: #00FF00;
+}
+.panel6:hover {
+  background-color: #000;
+  color: #fff;
 }
 
 .answer {
