@@ -16,13 +16,17 @@ var userAnswersNum;
 var timeoutFlg;
 var ANSWER_TIME = 3000;
 var PANEL_RESET_TIME = 2000;
+var STRAIGHT_WIN_NUM_THRESHOLD = 2;
 var round = 1;
+var straightWinNum = {};
+var maxWinNum = 0;
 
 initializeAnswer();
 initializeUserAnswersNum();
 
 io.on('connection', function (socket) {
 
+  straightWinNum[socket.id] = 0;
   socket.emit('login', { id: socket.id, round: round });
 
   socket.on('shot panel1', function (data) {
@@ -30,6 +34,7 @@ io.on('connection', function (socket) {
     userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
 
+    calcStraightWinNum(socket, panelNo);
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
       timeoutFlg = setTimeout(function() { 
@@ -42,6 +47,8 @@ io.on('connection', function (socket) {
     var panelNo = 2;
     userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
+
+    calcStraightWinNum(socket, panelNo);
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
       timeoutFlg = setTimeout(function() { 
@@ -54,6 +61,8 @@ io.on('connection', function (socket) {
     var panelNo = 3;
     userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
+
+    calcStraightWinNum(socket, panelNo);
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
       timeoutFlg = setTimeout(function() { 
@@ -66,6 +75,8 @@ io.on('connection', function (socket) {
     var panelNo = 4;
     userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
+
+    calcStraightWinNum(socket, panelNo);
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
       timeoutFlg = setTimeout(function() { 
@@ -78,6 +89,8 @@ io.on('connection', function (socket) {
     var panelNo = 5;
     userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
+
+    calcStraightWinNum(socket, panelNo);
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
       timeoutFlg = setTimeout(function() { 
@@ -90,6 +103,8 @@ io.on('connection', function (socket) {
     var panelNo = 6;
     userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
+
+    calcStraightWinNum(socket, panelNo);
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
       timeoutFlg = setTimeout(function() { 
@@ -116,11 +131,14 @@ function broadcastAnswer (socket) {
       }
     }
   }
+  var pickupUser = pickupGreatUser();
   io.sockets.emit('answer', {
     answer: answer,
     successUsers: successUsers,
     failureUsers: failureUsers,
     round: round,
+    pickup: pickupUser,
+    straightWinNum: straightWinNum,
   });
   initializeAnswer();
   initializeUserAnswersNum();
@@ -150,3 +168,28 @@ function broadcastActionLog (socket, panelNo) {
   });
 }
 
+function calcStraightWinNum (socket, panelNo) {
+  if (panelNo != answer) {
+    straightWinNum[socket.id]++;
+  }
+  else {
+    straightWinNum[socket.id] = 0;
+  }
+}
+function pickupGreatUser () {
+  var selected = {};
+  var winNum = 0;
+  var userid = '';
+  for (key in straightWinNum) {
+    if (straightWinNum[key] > winNum) {
+      userid = key;
+      winNum = straightWinNum[key];
+    }
+  }
+  if (winNum > maxWinNum) {
+    maxWinNum = winNum;
+    selected["userid"] = userid;
+    selected["straightWinNum"] = winNum;
+  }
+  return selected;
+}

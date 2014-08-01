@@ -17,56 +17,52 @@ $(function () {
   var round;
 
   var $answer = $('.answer');
+  var $pickup = $('.pickup');
+  var $straightWinNum = $('.straight-win-num');
   var socket = io();
 
-  function setPanelAction() {
+  function resetPanelAction () {
+    for (var idx = 0; idx < panels.length; idx++) {
+      panels[idx].off();
+    }
+  }
+
+  function setPanelAction () {
     $panel1.on('click', function () {
       localStorage.setItem(userid, JSON.stringify({ panelNo: 1, round: round }));
       socket.emit('shot panel1', 'shot1');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
-      for (var idx = 0; idx < panels.length; idx++) {
-        panels[idx].off();
-      }
+      resetPanelAction();
     });
     $panel2.on('click', function () {
       localStorage.setItem(userid, JSON.stringify({ panelNo: 2, round: round }));
       socket.emit('shot panel2', 'shot2');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
-      for (var idx = 0; idx < panels.length; idx++) {
-        panels[idx].off();
-      }
+      resetPanelAction();
     });
     $panel3.on('click', function () {
       localStorage.setItem(userid, JSON.stringify({ panelNo: 3, round: round }));
       socket.emit('shot panel3', 'shot3');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
-      for (var idx = 0; idx < panels.length; idx++) {
-        panels[idx].off();
-      }
+      resetPanelAction();
     });
     $panel4.on('click', function () {
       localStorage.setItem(userid, JSON.stringify({ panelNo: 4, round: round }));
       socket.emit('shot panel4', 'shot4');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
-      for (var idx = 0; idx < panels.length; idx++) {
-        panels[idx].off();
-      }
+      resetPanelAction();
     });
     $panel5.on('click', function () {
       localStorage.setItem(userid, JSON.stringify({ panelNo: 5, round: round }));
       socket.emit('shot panel5', 'shot5');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
-      for (var idx = 0; idx < panels.length; idx++) {
-        panels[idx].off();
-      }
+      resetPanelAction();
     });
     $panel6.on('click', function () {
       localStorage.setItem(userid, JSON.stringify({ panelNo: 6, round: round }));
       socket.emit('shot panel6', 'shot6');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
-      for (var idx = 0; idx < panels.length; idx++) {
-        panels[idx].off();
-      }
+      resetPanelAction();
     });
   }
   function highlightAnswerPanel(panelNo) {
@@ -95,6 +91,12 @@ $(function () {
         message += 'ゴールにつきささった。';
       }
       $answer.text(message);
+    }
+    if (data.pickup["userid"]) {
+      $pickup.text(data.pickup["userid"] + 'が' + data.pickup["straightWinNum"] + '連勝達成!!!!!');
+    }
+    if (data.straightWinNum[userid] >= 0) {
+      $straightWinNum.text('  (' + data.straightWinNum[userid] + '連勝中)');
     }
     switch (data.answer) {
       case "1":
@@ -143,6 +145,7 @@ $(function () {
     $round.text('Round: ' + data.round);
     round = data.round;
     $answer.text('');
+    resetPanelAction();
     setPanelAction();
   });
 });
