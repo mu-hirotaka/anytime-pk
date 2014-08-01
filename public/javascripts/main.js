@@ -21,7 +21,7 @@ $(function () {
 
   function setPanelAction() {
     $panel1.on('click', function () {
-      localStorage.setItem(userid, 1);
+      localStorage.setItem(userid, JSON.stringify({ panelNo: 1, round: round }));
       socket.emit('shot panel1', 'shot1');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
       for (var idx = 0; idx < panels.length; idx++) {
@@ -29,7 +29,7 @@ $(function () {
       }
     });
     $panel2.on('click', function () {
-      localStorage.setItem(userid, 2);
+      localStorage.setItem(userid, JSON.stringify({ panelNo: 2, round: round }));
       socket.emit('shot panel2', 'shot2');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
       for (var idx = 0; idx < panels.length; idx++) {
@@ -37,7 +37,7 @@ $(function () {
       }
     });
     $panel3.on('click', function () {
-      localStorage.setItem(userid, 3);
+      localStorage.setItem(userid, JSON.stringify({ panelNo: 3, round: round }));
       socket.emit('shot panel3', 'shot3');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
       for (var idx = 0; idx < panels.length; idx++) {
@@ -45,7 +45,7 @@ $(function () {
       }
     });
     $panel4.on('click', function () {
-      localStorage.setItem(userid, 4);
+      localStorage.setItem(userid, JSON.stringify({ panelNo: 4, round: round }));
       socket.emit('shot panel4', 'shot4');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
       for (var idx = 0; idx < panels.length; idx++) {
@@ -53,7 +53,7 @@ $(function () {
       }
     });
     $panel5.on('click', function () {
-      localStorage.setItem(userid, 5);
+      localStorage.setItem(userid, JSON.stringify({ panelNo: 5, round: round }));
       socket.emit('shot panel5', 'shot5');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
       for (var idx = 0; idx < panels.length; idx++) {
@@ -61,7 +61,7 @@ $(function () {
       }
     });
     $panel6.on('click', function () {
-      localStorage.setItem(userid, 6);
+      localStorage.setItem(userid, JSON.stringify({ panelNo: 6, round: round }));
       socket.emit('shot panel6', 'shot6');
       $(this).animate({'background-color': '#000', 'color': '#fff'});
       for (var idx = 0; idx < panels.length; idx++) {
@@ -83,9 +83,11 @@ $(function () {
   });
 
   socket.on('answer', function (data) {
-    var userAnswer = localStorage[userid];
+    var userAnswerInfo = JSON.parse(localStorage[userid]);
+    var userAnswer = userAnswerInfo["panelNo"];
+    var userAnswerRound = userAnswerInfo["round"];
     var message = 'GKは' + data.answer + 'を選択';
-    if (userAnswer) {
+    if ((data.round == userAnswerRound) && userAnswer) {
       if (data.answer == userAnswer) {
         message += 'セーブされた。';
       }
@@ -139,6 +141,7 @@ $(function () {
       panels[idx].animate({'background-color': COLORS[idx], 'color': '#000'});
     }
     $round.text('Round: ' + data.round);
+    round = data.round;
     $answer.text('');
     setPanelAction();
   });
