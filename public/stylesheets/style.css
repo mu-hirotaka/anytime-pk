@@ -53,8 +53,21 @@ a {
   background-color: #00FF00;
 }
 .answer {
+  height: 25px;
 }
+
 .action-log {
-  overflow-y: scroll;
   height: 50px;
+  overflow-y: scroll;
+}
+.userid {
+  color: #ff1493;
+}
+.success-log {
+  height: 50px;
+  overflow-y: scroll;
+}
+.failure-log {
+  height: 50px;
+  overflow-y: scroll;
 }

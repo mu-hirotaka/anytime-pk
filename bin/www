@@ -16,17 +16,18 @@ var userAnswersNum;
 var timeoutFlg;
 var ANSWER_TIME = 3000;
 var PANEL_RESET_TIME = 2000;
+var round = 1;
 
 initializeAnswer();
 initializeUserAnswersNum();
 
 io.on('connection', function (socket) {
 
-  socket.emit('login', socket.id);
+  socket.emit('login', { id: socket.id, round: round });
 
   socket.on('shot panel1', function (data) {
     var panelNo = 1;
-    userAnswersNum[panelNo].push(1);
+    userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
 
     broadcastActionLog(socket, panelNo);
@@ -39,7 +40,7 @@ io.on('connection', function (socket) {
 
   socket.on('shot panel2', function (data) {
     var panelNo = 2;
-    userAnswersNum[panelNo].push(1);
+    userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
@@ -51,7 +52,7 @@ io.on('connection', function (socket) {
 
   socket.on('shot panel3', function (data) {
     var panelNo = 3;
-    userAnswersNum[panelNo].push(1);
+    userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
@@ -63,7 +64,7 @@ io.on('connection', function (socket) {
 
   socket.on('shot panel4', function (data) {
     var panelNo = 4;
-    userAnswersNum[panelNo].push(1);
+    userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
@@ -75,8 +76,7 @@ io.on('connection', function (socket) {
 
   socket.on('shot panel5', function (data) {
     var panelNo = 5;
-    console.log('shot panel5');
-    userAnswersNum[panelNo].push(1);
+    userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
@@ -88,7 +88,7 @@ io.on('connection', function (socket) {
 
   socket.on('shot panel6', function (data) {
     var panelNo = 6;
-    userAnswersNum[panelNo].push(1);
+    userAnswersNum[panelNo].push(socket.id);
     socket.answer = panelNo;
     broadcastActionLog(socket, panelNo);
     if (!timeoutFlg) {
@@ -102,14 +102,31 @@ io.on('connection', function (socket) {
 
 function broadcastAnswer (socket) {
   console.log(userAnswersNum);
+  var successUsers = [];
+  var failureUsers = [];
+  for (var idx = 0; idx < answers.length; idx++) {
+    var panelNo = idx + 1;
+    if (answer == panelNo) {
+      for (var i = 0; i < userAnswersNum[panelNo].length; i++) {
+        failureUsers.push(userAnswersNum[panelNo][i]);
+      }
+    } else {
+      for (var i = 0; i < userAnswersNum[panelNo].length; i++) {
+        successUsers.push(userAnswersNum[panelNo][i]);
+      }
+    }
+  }
   io.sockets.emit('answer', {
     answer: answer,
+    successUsers: successUsers,
+    failureUsers: failureUsers,
+    round: round,
   });
   initializeAnswer();
   initializeUserAnswersNum();
   timeoutFlg = 0;
   setTimeout(function() {
-    io.sockets.emit('reset panel', 'reset');
+    io.sockets.emit('reset panel', { round: ++round });
   }, PANEL_RESET_TIME);
 }
 

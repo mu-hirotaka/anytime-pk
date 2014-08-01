@@ -9,8 +9,12 @@ $(function () {
   var $panel6 = $('.panel6');
   var panels = [$panel1, $panel2, $panel3, $panel4, $panel5, $panel6];
   var $actionLog = $('.action-log > ul');
+  var $successLog = $('.success-log > ul');
+  var $failureLog = $('.failure-log > ul');
   var $userid = $('.userid');
+  var $round = $('.round');
   var userid;
+  var round;
 
   var $answer = $('.answer');
   var socket = io();
@@ -71,9 +75,11 @@ $(function () {
   setPanelAction();
 
 
-  socket.on('login', function (id) {
-    $userid.text(id);
-    userid = id;
+  socket.on('login', function (data) {
+    $userid.text(data.id);
+    userid = data.id;
+    round = data.round;
+    $round.text('Round: ' + round);
   });
 
   socket.on('answer', function (data) {
@@ -108,6 +114,20 @@ $(function () {
         highlightAnswerPanel(6);
         break;
     }
+    for (var i = 0; i < data.successUsers.length; i++) {
+      if (userid == data.successUsers[i]) {
+        $successLog.prepend('<li class="userid">' + data.successUsers[i] + 'はPK成功。</li>');
+      } else {
+        $successLog.prepend('<li>' + data.successUsers[i] + 'はPK成功。</li>');
+      }
+    }
+    for (var i = 0; i < data.failureUsers.length; i++) {
+      if (userid == data.failureUsers[i]) {
+        $failureLog.prepend('<li class="userid">' + data.failureUsers[i] + 'はPK失敗。</li>');
+      } else {
+        $failureLog.prepend('<li>' + data.failureUsers[i] + 'はPK失敗。</li>');
+      }
+    }
   });
 
   socket.on('action log', function(data) {
@@ -118,6 +138,8 @@ $(function () {
     for (var idx = 0; idx < panels.length; idx++) {
       panels[idx].animate({'background-color': COLORS[idx], 'color': '#000'});
     }
+    $round.text('Round: ' + data.round);
+    $answer.text('');
     setPanelAction();
   });
 });
