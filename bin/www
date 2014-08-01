@@ -15,6 +15,7 @@ var answer;
 var userAnswersNum;
 var timeoutFlg;
 var ANSWER_TIME = 3000;
+var PANEL_RESET_TIME = 2000;
 
 initializeAnswer();
 initializeUserAnswersNum();
@@ -107,6 +108,9 @@ function broadcastAnswer (socket) {
   initializeAnswer();
   initializeUserAnswersNum();
   timeoutFlg = 0;
+  setTimeout(function() {
+    io.sockets.emit('reset panel', 'reset');
+  }, PANEL_RESET_TIME);
 }
 
 function initializeAnswer () {
